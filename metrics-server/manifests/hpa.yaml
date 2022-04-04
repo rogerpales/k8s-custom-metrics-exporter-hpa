@@ -1,21 +1,52 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 3
+  template: 
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: default
+  labels:
+    app: nginx
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx
+---
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: aggregator-hpa
+  name: nginx-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: aggregator
+    name: nginx
   minReplicas: 1
   maxReplicas: 10
-  behavior:
-    scaleDown:
-      stabilizationWindowSeconds: 60
-      policies:
-      - type: Pods
-        value: 1
-        periodSeconds: 20
   metrics:
   - type: Object
     object:
@@ -27,5 +58,5 @@ spec:
         name: my-metrics-exporter
       target:
         type: Value
-        value: 5
-
+        value: 3
+---

@@ -13,11 +13,10 @@ spec:
         app: my-metrics-exporter
     spec:
       containers:
-      - image: shubhomoy777/my-metrics-server
+      - image: rogerpales/my-metrics-server:amd
         name: my-metrics-exporter
         ports:
         - containerPort: 6443
-      nodeName: group-12-node-2
 
 ---
 
