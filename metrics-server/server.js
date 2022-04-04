@@ -4,7 +4,12 @@ var https = require('https');
 const fs = require('fs')
 const app = express()
 
-var currVal = 1
+// var currVal = 1
+
+function currVal() {
+    var d = new Date()
+    return Math.round(d.getMinutes()/10);
+}
 
 app.get('/apis/custom.metrics.k8s.io/v1beta1/', (req, res) => {
     res.send({
@@ -15,7 +20,7 @@ app.get('/apis/custom.metrics.k8s.io/v1beta1/', (req, res) => {
 app.get('/update', (req, res) => {
     currVal = req.query.q
     res.send({
-        currentVal: currVal
+        currentVal: currVal()
     })
 })
 
@@ -36,7 +41,7 @@ app.get('/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/services/my-metr
                 },
                 metricName: "instance",
                 timestamp: new Date(),
-                value: currVal
+                value: currVal()
             }
         ]
     })
